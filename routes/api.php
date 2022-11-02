@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\Tenant\TenantController;
+use App\Http\Controllers\Admin\User\AuthController;
+use App\Http\Controllers\Admin\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,9 +17,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::prefix("v1")->group(function () {
+
+    // auth
+    Route::post("register", [AuthController::class, 'register']);
+    Route::post("login", [AuthController::class, 'login']);
+    Route::middleware(['auth:sanctum'])->post("logout", [AuthController::class, 'logout']);
+
+    Route::middleware(['auth:sanctum'])->group(function () {
+
+        // user
+        Route::apiResource("user", UserController::class);
+
+        // tenant
+        Route::apiResource("tenant", TenantController::class);
+
+    });
 });
 
-
-Route::apiResource("tenant",\App\Http\Controllers\TenantController::class);

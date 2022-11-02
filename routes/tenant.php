@@ -29,6 +29,6 @@ Route::middleware([
 
 
     Route::middleware(['auth:sanctum'])->prefix("tenantApi")->group(function () {
-        Route::get("me/{id}", [\App\Http\Controllers\TenantController::class, 'show']);
+        Route::get("me/{id}", [\App\Http\Controllers\Admin\Tenant\TenantController::class, 'show']);
     });
 });
