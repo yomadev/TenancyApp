@@ -25,12 +25,10 @@ class TenantController extends Controller
     public function show(Request $request, $id)
     {
         if ($this->hasAuth()) {
-            if ($request->user()) {
-                return $request->user();
-            }
-            return "not found" . $request->bearerToken();
+            return $this->setResponse(Tenant::find($id));
         }
         return $this->unauthorised();
+
     }
 
     public function store(Request $request): JsonResponse
@@ -87,10 +85,12 @@ class TenantController extends Controller
     {
         if ($request->user()) {
             if ($tenant = Tenant::find($id)) {
+                // soft delete tenant without deleting database
                 Tenant::withoutEvents(function () use ($tenant) {
-                    return $tenant->delete();
+                    return $tenant->delete(); //will also delete route
                 });
-//                $tenant->softDelete();
+                // delete tenant and his database
+//                $tenant->delete();
                 return $this->setResponse($tenant);
             }
         }
